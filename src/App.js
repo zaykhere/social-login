@@ -3,9 +3,33 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Post from "./pages/Post";
+import React, {useEffect, useState} from 'react';
 
 function App() {
-  const user = true;
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getUser = async() => {
+      fetch("http://localhost:5000/auth/login/success", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": true
+        }
+      }).then(res=>{
+        if(res.status===200) return res.json();
+        throw new Error("Authentication has been failed");
+      }).then(resObject=>{
+        setUser(resObject.user);
+      }).catch(err=>{
+        console.log(err);
+      })
+    };
+
+    getUser();
+  }, [])
 
   return (
     <BrowserRouter>
